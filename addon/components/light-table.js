@@ -10,8 +10,8 @@ const {
 } = Ember;
 
 /**
- * @module Components
- * @main ligh-table
+ * @module Light Table
+ * @main light-table
  */
 
 /**
@@ -23,17 +23,16 @@ const {
  * {{/light-table}}
  * ```
  *
- * Please see the documentation for the [Head](../classes/Head.html), [Body](../classes/Body.html), and [Foot](../classes/Foot.html) components
+ * Please see the documentation for the [Head](../classes/t.head.html), [Body](../classes/t.body.html), and [Foot](../classes/t.foot.html) components
  * for more details on all possible options and actions.
  *
- * @class Light Table
+ * @class light-table
  * @main Components
- * @uses TableScrollMixin
  */
 
 const LightTable = Component.extend({
   layout,
-  classNameBindings: [':ember-light-table', 'virtualScrollbar'],
+  classNameBindings: [':ember-light-table'],
   attributeBindings: ['style'],
 
   /**
@@ -77,6 +76,15 @@ const LightTable = Component.extend({
    * @default null
    */
   height: null,
+
+  /**
+   * Class names that will be added to all <table> tags
+   *
+   * @property tableClassNames
+   * @type {String}
+   * @default ''
+   */
+  tableClassNames: '',
 
   /**
    * Table component shared options

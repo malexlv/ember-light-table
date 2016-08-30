@@ -84,7 +84,7 @@
   z-index: 10;
 }
 
-.ember-light-table .lt-column .lt-column-resize {
+.ember-light-table .lt-column .lt-column-resizer {
   width: 5px;
   cursor: col-resize;
   height: 100%;
