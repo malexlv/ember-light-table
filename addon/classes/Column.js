@@ -216,7 +216,15 @@ export default class Column extends Ember.Object.extend({
     this.setProperties(options);
 
     if(!isEmpty(options.subColumns)) {
-      this.set('subColumns', emberArray(options.subColumns.map(sc => new Column(sc))));
+      this.set('subColumns', emberArray(options.subColumns.map(sc => {
+        let c = new Column(sc);
+
+        // Add a reference to the belonging group
+        c.set('_group', this);
+
+        return c;
+      })));
     }
+
   }
 }

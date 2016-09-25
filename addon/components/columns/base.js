@@ -1,10 +1,12 @@
 import Ember from 'ember';
 import layout from 'ember-light-table/templates/components/columns/base';
+import DraggableColumnMixin from 'ember-light-table/mixins/draggable-column';
 
 const {
   Component,
   computed,
-  isEmpty
+  isEmpty,
+  String: { htmlSafe }
 } = Ember;
 
 /**
@@ -17,11 +19,11 @@ const {
  * @class Base Column
  */
 
-const Column = Component.extend({
+const Column = Component.extend(DraggableColumnMixin, {
   layout,
   tagName: 'th',
   classNames: ['lt-column'],
-  attributeBindings: ['width', 'colspan', 'rowspan'],
+  attributeBindings: ['style', 'colspan', 'rowspan'],
   classNameBindings: ['align', 'isGroupColumn:lt-group-column', 'isHideable', 'isSortable', 'isSorted', 'isResizable', 'isDraggable', 'column.classNames'],
 
   width: computed.readOnly('column.width'),
@@ -31,6 +33,11 @@ const Column = Component.extend({
   isHideable: computed.readOnly('column.hideable'),
   isResizable: computed.readOnly('column.resizable'),
   isDraggable: computed.readOnly('column.draggable'),
+
+  style: computed('width', function() {
+    const width = this.get('width');
+    return htmlSafe(width ? `width: ${this.get('width')}` : '');
+  }).readOnly(),
 
   align: computed('column.align', function () {
     return `align-${this.get('column.align')}`;

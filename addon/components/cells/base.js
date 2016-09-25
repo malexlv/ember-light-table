@@ -3,7 +3,8 @@ import layout from 'ember-light-table/templates/components/cells/base';
 
 const {
   Component,
-  computed
+  computed,
+  String: { htmlSafe }
 } = Ember;
 
 /**
@@ -20,11 +21,16 @@ const Cell = Component.extend({
   layout,
   tagName: 'td',
   classNames: ['lt-cell'],
-  attributeBindings: ['width'],
+  attributeBindings: ['style'],
   classNameBindings: ['align', 'isSorted', 'column.cellClassNames'],
 
   width: computed.readOnly('column.width'),
   isSorted: computed.readOnly('column.sorted'),
+
+  style: computed('width', function() {
+    const width = this.get('width');
+    return htmlSafe(width ? `width: ${this.get('width')}` : '');
+  }).readOnly(),
 
   align: computed('column.align', function() {
     return `align-${this.get('column.align')}`;
