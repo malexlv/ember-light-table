@@ -177,6 +177,16 @@ export default class Column extends Ember.Object.extend({
   format: null,
 
   /**
+   * A reference to the belonging column group. This will only have
+   * a value if this column is a sub column.
+   *
+   * @property format
+   * @type {Function}
+   * @private
+   */
+  _group: null,
+
+  /**
    * @property isGroupColumn
    * @type {Boolean}
    * @private
@@ -217,12 +227,10 @@ export default class Column extends Ember.Object.extend({
 
     if(!isEmpty(options.subColumns)) {
       this.set('subColumns', emberArray(options.subColumns.map(sc => {
-        let c = new Column(sc);
-
         // Add a reference to the belonging group
-        c.set('_group', this);
+        sc._group = this;
 
-        return c;
+        return new Column(sc);
       })));
     }
 
