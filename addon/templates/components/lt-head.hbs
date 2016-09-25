@@ -30,19 +30,17 @@
         </tr>
 
         <tr>
-          {{#each columnGroups as |colGroup|}}
-            {{#each colGroup.visibleSubColumns as |column|}}
-              {{component (concat 'light-table/columns/' column.type) column
-                table=table
-                rowspan=1
-                classNames="lt-sub-column"
-                tableActions=tableActions
-                sortIcons=sortIcons
-                resizeOnDrag=resizeOnDrag
-                click=(action 'onColumnClick' column)
-                doubleClick=(action 'onColumnDoubleClick' column)
-                onColumnResized=(action 'onColumnResized')}}
-            {{/each}}
+          {{#each subColumns as |column|}}
+            {{component (concat 'light-table/columns/' column.type) column
+              table=table
+              rowspan=1
+              classNames="lt-sub-column"
+              tableActions=tableActions
+              sortIcons=sortIcons
+              resizeOnDrag=resizeOnDrag
+              click=(action 'onColumnClick' column)
+              doubleClick=(action 'onColumnDoubleClick' column)
+              onColumnResized=(action 'onColumnResized')}}
           {{/each}}
         </tr>
       {{/if}}
