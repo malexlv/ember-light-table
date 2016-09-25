@@ -9,9 +9,9 @@
            the td's fail to hold their width. Creating a scaffolding will setup the table columns correctly
         --}}
         {{#if subColumns.length}}
-          <tr>
+          <tr class="lt-scaffolding-row">
             {{#each subColumns as |column|}}
-              <td width={{column.width}} class="lt-scaffolding"></td>
+              <td style={{html-safe (if column.width (concat 'width: ' column.width))}} class="lt-scaffolding"></td>
             {{/each}}
           </tr>
         {{/if}}
@@ -22,13 +22,13 @@
               table=table
               tableActions=tableActions
               sortIcons=sortIcons
+              resizeOnDrag=resizeOnDrag
               click=(action 'onColumnClick' column)
               doubleClick=(action 'onColumnDoubleClick' column)
-              columnResized=(action 'onColumnResized')}}
+              onColumnResized=(action 'onColumnResized')}}
           {{/each}}
         </tr>
 
-        {{!-- {{#lt-draggable-target tag="tr" isDraggable=true}} --}}
         <tr>
           {{#each columnGroups as |colGroup|}}
             {{#each colGroup.visibleSubColumns as |column|}}
@@ -38,13 +38,13 @@
                 classNames="lt-sub-column"
                 tableActions=tableActions
                 sortIcons=sortIcons
+                resizeOnDrag=resizeOnDrag
                 click=(action 'onColumnClick' column)
                 doubleClick=(action 'onColumnDoubleClick' column)
-                columnResized=(action 'onColumnResized')}}
+                onColumnResized=(action 'onColumnResized')}}
             {{/each}}
           {{/each}}
         </tr>
-        {{!-- {{/lt-draggable-target}} --}}
       {{/if}}
     </thead>
   </table>

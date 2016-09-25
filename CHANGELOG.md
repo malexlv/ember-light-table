@@ -1,6 +1,37 @@
 Changelog
 =========
 
+## v1.4.0
+
+### Pull Requests
+
+- [#167](https://github.com/offirgolan/ember-light-table/pull/167)  [FEATURE] Two-way sync between rows and model  *by [Offir Golan](https://github.com/offirgolan)*
+- [#177](https://github.com/offirgolan/ember-light-table/pull/177)  [FEATURE] Customizable components  *by [Taras Mankovski](https://github.com/taras)*
+- [#183](https://github.com/offirgolan/ember-light-table/pull/183)  [BUGFIX] Add footer scaffolding and move width into style attr  *by [Offir Golan](https://github.com/offirgolan)*
+
+## v1.3.1
+
+### Pull Requests
+
+- [#166](https://github.com/offirgolan/ember-light-table/pull/166)  [FEATURE] Introduce `resizeOnDrag` for column resizing  *by [Offir Golan](https://github.com/offirgolan)*
+
+## v1.3.0
+
+### Pull Requests
+
+- [#164](https://github.com/offirgolan/ember-light-table/pull/164)  [FEATURE] Rename flattenedColumns to allColumns  *by [Offir Golan](https://github.com/offirgolan)*
+
+## v1.2.0
+
+### Pull Requests
+
+- [#160](https://github.com/offirgolan/ember-light-table/pull/160)  [FEATURE] `multiSelectRequiresKeyboard` option for toggling row selection without ctrl/cmd  *by [Jeremy Bargar](https://github.com/bargar)*
+- [#163](https://github.com/offirgolan/ember-light-table/pull/163)  [BUGFIX] Autoprefix addon.css (until PostCSS is up and running) + install ember-cli-autoprefixer to prefix demo page CSS  *by [Offir Golan](https://github.com/offirgolan)*
+- [#163](https://github.com/offirgolan/ember-light-table/pull/163)  [BUGFIX] Pass table instance + rawValue to custom cell component  *by [Offir Golan](https://github.com/offirgolan)*
+- [#163](https://github.com/offirgolan/ember-light-table/pull/163)  [BUGFIX] Use style instead of deprecated width attribute  *by [Offir Golan](https://github.com/offirgolan)*
+- [#163](https://github.com/offirgolan/ember-light-table/pull/163)  [BUGFIX] Remove readOnly from value in base cell so it can be modified  *by [Offir Golan](https://github.com/offirgolan)*
+- [#163](https://github.com/offirgolan/ember-light-table/pull/163)  [BUGFIX] Column resizer now applies width to table rows on `mouseUp` instead of on `mouseMove`  *by [Offir Golan](https://github.com/offirgolan)*
+
 ## v1.1.1
 
 ### Pull Requests

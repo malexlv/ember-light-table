@@ -101,6 +101,19 @@ export default Component.extend({
   multiSelect: false,
 
   /**
+   * When multiSelect is true, this property determines whether or not `ctrl`
+   * (or `cmd`) is required to select additional rows, one by one. When false,
+   * simply clicking on subsequent rows will select or deselect them.
+   *
+   * `shift` to select many consecutive rows is unaffected by this property.
+   *
+   * @property multiSelectRequiresKeyboard
+   * @type {Boolean}
+   * @default true
+   */
+  multiSelectRequiresKeyboard: true,
+
+  /**
    * Hide scrollbar when not scrolling
    *
    * @property autoHideScrollbar
@@ -161,6 +174,48 @@ export default Component.extend({
    */
   useVirtualScrollbar: false,
 
+  /**
+   * Allows to customize the component used to render rows
+   * 
+   * ```hbs
+   * {{#light-table table as |t|}}
+   *    {{t.body rowComponent=(component 'my-row')}}
+   * {{/light-table}}
+   * ```
+   * @property rowComponent
+   * @type {Ember.Component}
+   * @default null
+   */
+  rowComponent: null,
+
+  /**
+   * Allows to customize the component used to render spanned rows
+   * 
+   * ```hbs
+   * {{#light-table table as |t|}}
+   *    {{t.body spannedRowComponent=(component 'my-spanned-row')}}
+   * {{/light-table}}
+   * ```
+   * @property rowComponent
+   * @type {Ember.Component}
+   * @default null
+   */
+  spannedRowComponent: null,
+
+  /**
+   * Allows to customize the component used to render infinite loader
+   * 
+   * ```hbs
+   * {{#light-table table as |t|}}
+   *    {{t.body infinityComponent=(component 'my-infinity')}}
+   * {{/light-table}}
+   * ```
+   * @property rowComponent
+   * @type {Ember.Component}
+   * @default null
+   */
+  infinityComponent: null,
+
   rows: computed.readOnly('table.visibleRows'),
   columns: computed.readOnly('table.visibleColumns'),
   colspan: computed.readOnly('columns.length'),
@@ -206,6 +261,7 @@ export default Component.extend({
     onRowClick(row, e) {
       let rows = this.get('table.rows');
       let multiSelect = this.get('multiSelect');
+      let multiSelectRequiresKeyboard = this.get('multiSelectRequiresKeyboard');
       let canSelect = this.get('canSelect');
       let isSelected = row.get('selected');
       let currIndex = rows.indexOf(row);
@@ -218,7 +274,7 @@ export default Component.extend({
         if (e.shiftKey && multiSelect) {
           rows.slice(Math.min(currIndex, prevIndex), Math.max(currIndex, prevIndex) + 1).forEach(r => r.set('selected', !isSelected));
           this._prevSelectedIndex = currIndex;
-        } else if ((e.ctrlKey || e.metaKey) && multiSelect) {
+        } else if ((!multiSelectRequiresKeyboard || (e.ctrlKey || e.metaKey)) && multiSelect) {
           row.toggleProperty('selected');
         } else {
           this.get('table.selectedRows').setEach('selected', false);

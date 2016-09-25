@@ -1,13 +1,26 @@
 import Ember from 'ember';
 import Row from 'ember-light-table/classes/Row';
 import Column from 'ember-light-table/classes/Column';
+import SyncArrayProxy from 'ember-light-table/-private/sync-array-proxy';
+import { mergeOptionsWithGlobals } from 'ember-light-table/-private/global-options';
 
 const {
+  get,
   computed,
   isNone,
   isEmpty,
   A: emberArray
 } = Ember;
+
+const RowSyncArrayProxy = SyncArrayProxy.extend({
+  serializeContentObjects(objects) {
+    return Table.createRows(objects);
+  },
+
+  serializeSyncArrayObjects(objects) {
+    return objects.map(o => get(o, 'content'));
+  }
+});
 
 /**
  * @module Table
@@ -73,19 +86,19 @@ export default class Table extends Ember.Object.extend({
    * @property hideableColumns
    * @type {Ember.Array}
    */
-  hideableColumns: computed.filterBy('flattenedColumns', 'hideable', true).readOnly(),
+  hideableColumns: computed.filterBy('allColumns', 'hideable', true).readOnly(),
 
   /**
    * @property hiddenColumns
    * @type {Ember.Array}
    */
-  hiddenColumns: computed.filterBy('flattenedColumns', 'hidden', true).readOnly(),
+  hiddenColumns: computed.filterBy('allColumns', 'hidden', true).readOnly(),
 
   /**
    * @property visibleColumns
    * @type {Ember.Array}
    */
-  visibleColumns: computed.filterBy('flattenedColumns', 'hidden', false).readOnly(),
+  visibleColumns: computed.filterBy('allColumns', 'hidden', false).readOnly(),
 
   /**
    * @property visibleColumnGroups
@@ -109,10 +122,10 @@ export default class Table extends Ember.Object.extend({
   }).readOnly(),
 
   /**
-   * @property flattenedColumns
+   * @property allColumns
    * @type {Ember.Array}
    */
-  flattenedColumns: computed('columns.[]', 'columns.@each.subColumns', 'visibleSubColumns.[]', function() {
+  allColumns: computed('columns.[]', 'columns.@each.subColumns', 'visibleSubColumns.[]', function() {
     return emberArray(this.get('columns').reduce((arr, c) => {
       let subColumns = c.get('subColumns');
       if (isEmpty(subColumns)) {
@@ -129,13 +142,32 @@ export default class Table extends Ember.Object.extend({
    * @constructor
    * @param  {Array} columns
    * @param  {Array} rows
+   * @param  {Object} options
+   *    - enableSync ( _Boolean_ ): If true, creates a two way sync between the table's rows
+   *                                and the passed rows collection
    */
-  constructor(columns = [], rows = []) {
+  constructor(columns = [], rows = [], options = {}) {
     super();
-    this.setProperties({
-      rows: emberArray(Table.createRows(rows)),
-      columns: emberArray(Table.createColumns(columns)),
-    });
+
+    let _columns = emberArray(Table.createColumns(columns));
+    let _rows = emberArray(Table.createRows(rows));
+    let _options = mergeOptionsWithGlobals(options);
+
+    if(_options.enableSync) {
+      _rows = RowSyncArrayProxy.create({ syncArray: rows, content: _rows });
+    }
+
+    this.setProperties({ columns: _columns, rows: _rows });
+  }
+
+  destroy() {
+    this._super(...arguments);
+
+    let rows = this.get('rows');
+
+    if(rows instanceof RowSyncArrayProxy) {
+      rows.destroy();
+    }
   }
 
   // Rows
@@ -237,6 +269,16 @@ export default class Table extends Ember.Object.extend({
     rows.forEach(r => this.removeRow(r));
   }
 
+
+  /**
+   * Remove a row at the specified index
+   * @method removeRowAt
+   * @param  {Number}  index
+   */
+  removeRowAt(index) {
+    this.get('rows').removeAt(index);
+  }
+
   // Columns
 
   /**
@@ -320,6 +362,15 @@ export default class Table extends Ember.Object.extend({
    */
   removeColumns(columns = []) {
     return this.get('columns').removeObjects(columns);
+  }
+
+  /**
+   * Remove a column at the specified index
+   * @method removeColumnAt
+   * @param  {Number}  index
+   */
+  removeColumnAt(index) {
+    this.get('columns').removeAt(index);
   }
 
   /**

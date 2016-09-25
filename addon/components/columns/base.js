@@ -1,12 +1,12 @@
 import Ember from 'ember';
 import layout from 'ember-light-table/templates/components/columns/base';
 import DraggableColumnMixin from 'ember-light-table/mixins/draggable-column';
+import cssStyleify from 'ember-light-table/utils/css-styleify';
 
 const {
   Component,
   computed,
-  isEmpty,
-  String: { htmlSafe }
+  isEmpty
 } = Ember;
 
 /**
@@ -26,7 +26,6 @@ const Column = Component.extend(DraggableColumnMixin, {
   attributeBindings: ['style', 'colspan', 'rowspan'],
   classNameBindings: ['align', 'isGroupColumn:lt-group-column', 'isHideable', 'isSortable', 'isSorted', 'isResizable', 'isDraggable', 'column.classNames'],
 
-  width: computed.readOnly('column.width'),
   isGroupColumn: computed.readOnly('column.isGroupColumn'),
   isSortable: computed.readOnly('column.sortable'),
   isSorted: computed.readOnly('column.sorted'),
@@ -34,14 +33,19 @@ const Column = Component.extend(DraggableColumnMixin, {
   isResizable: computed.readOnly('column.resizable'),
   isDraggable: computed.readOnly('column.draggable'),
 
-  style: computed('width', function() {
-    const width = this.get('width');
-    return htmlSafe(width ? `width: ${this.get('width')}` : '');
-  }).readOnly(),
+  style: computed('column.width', function() {
+    return cssStyleify(this.get('column').getProperties(['width']));
+  }),
 
   align: computed('column.align', function () {
     return `align-${this.get('column.align')}`;
   }).readOnly(),
+
+  /**
+   * @property table
+   * @type {Table}
+   */
+  table: null,
 
   /**
    * @property column
@@ -80,8 +84,8 @@ const Column = Component.extend(DraggableColumnMixin, {
   }),
 
   actions: {
-    columnResized(width) {
-      this.sendAction('columnResized', this.get('column'), width);
+    onColumnResized(width) {
+      this.sendAction('onColumnResized', this.get('column'), width);
     }
   }
 });
