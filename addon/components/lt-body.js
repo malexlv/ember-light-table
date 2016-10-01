@@ -196,7 +196,7 @@ export default Component.extend({
    *    {{t.body spannedRowComponent=(component 'my-spanned-row')}}
    * {{/light-table}}
    * ```
-   * @property rowComponent
+   * @property spannedRowComponent
    * @type {Ember.Component}
    * @default null
    */
@@ -210,7 +210,7 @@ export default Component.extend({
    *    {{t.body infinityComponent=(component 'my-infinity')}}
    * {{/light-table}}
    * ```
-   * @property rowComponent
+   * @property infinityComponent
    * @type {Ember.Component}
    * @default null
    */
@@ -239,7 +239,7 @@ export default Component.extend({
     this.set('useVirtualScrollbar', fixedHeader || fixedFooter);
   },
 
-  togglExpandedRow(row) {
+  toggleExpandedRow(row) {
     let multi = this.get('multiRowExpansion');
     let shouldExpand = !row.expanded;
 
@@ -281,13 +281,13 @@ export default Component.extend({
           row.set('selected', !isSelected);
 
           if (this.get('canExpand') && this.get('expandOnClick')) {
-            this.togglExpandedRow(row);
+            this.toggleExpandedRow(row);
           }
         }
         this._prevSelectedIndex = currIndex;
       } else {
         if (this.get('canExpand') && this.get('expandOnClick')) {
-          this.togglExpandedRow(row);
+          this.toggleExpandedRow(row);
         }
       }
 
