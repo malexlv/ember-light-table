@@ -7,8 +7,6 @@ const {
 
 let sourceColumn;
 
-// TODO: Add actions
-
 export default Ember.Mixin.create({
   classNameBindings: ['isDragging', 'isDragTarget', 'dragDirection'],
   attributeBindings: ['isDraggable:draggable'],
@@ -17,12 +15,19 @@ export default Ember.Mixin.create({
     if(this.get('isDragTarget')) {
       return `drag-${this._getDragDirection()}`;
     }
-  }),
+  }).readOnly(),
 
   dragColumnGroup: computed('column._group', function() {
     const columnGroup = this.get('column._group');
     return columnGroup ? columnGroup.get('subColumns') : this.get('table.columns');
-  }),
+  }).readOnly(),
+
+  isDropTarget: computed(function() {
+    /*
+      A column is a valid drop target only if its in the same group
+     */
+    return this.get('column._group') === sourceColumn.get('_group');
+  }).volatile().readOnly(),
 
   dragStart(e) {
     this._super(...arguments);
@@ -34,12 +39,13 @@ export default Ember.Mixin.create({
 
     sourceColumn = column;
     this.set('isDragging', true);
+    this.sendAction('onColumnDrag', sourceColumn, ...arguments);
   },
 
   dragEnter(e) {
     this._super(...arguments);
 
-    if(this._isDropTarget()) {
+    if(this.get('isDropTarget')) {
       this.set('isDragTarget', this.get('column') !== sourceColumn);
       e.preventDefault();
       return false;
@@ -49,7 +55,7 @@ export default Ember.Mixin.create({
   dragOver(e) {
     this._super(...arguments);
 
-    if(this._isDropTarget()) {
+    if(this.get('isDropTarget')) {
       e.preventDefault();
       return false;
     }
@@ -67,6 +73,15 @@ export default Ember.Mixin.create({
       isDragTarget: false,
       isDragging: false
     });
+
+    /*
+      If sourceColumn still references a column, it means that a successful
+      drop did not happen.
+     */
+    if(sourceColumn) {
+      this.sendAction('onColumnDrop', sourceColumn, false, ...arguments);
+      sourceColumn = null;
+    }
   },
 
   drop(e) {
@@ -90,6 +105,8 @@ export default Ember.Mixin.create({
       isDragTarget: false,
       isDragging: false
     });
+    this.sendAction('onColumnDrop', sourceColumn, true, ...arguments);
+    sourceColumn = null;
   },
 
   _getDragDirection() {
@@ -98,12 +115,5 @@ export default Ember.Mixin.create({
     const sourceIdx = columns.indexOf(sourceColumn);
 
     return (sourceIdx - targetIdx) < 0 ? 'right' : 'left';
-  },
-
-  _isDropTarget() {
-    /*
-      A column is a valid drop target only if its in the same group
-     */
-    return this.get('column._group') === sourceColumn.get('_group');
   }
 });

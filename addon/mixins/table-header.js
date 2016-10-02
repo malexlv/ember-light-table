@@ -137,6 +137,27 @@ export default Ember.Mixin.create({
      */
     onColumnResized(/* column, width */) {
       callAction(this, 'onColumnResized', ...arguments);
+    },
+
+    /**
+     * onColumnDrag action.
+     *
+     * @event onColumnDrag
+     * @param  {Column}   column The column that is being dragged
+     */
+    onColumnDrag(/* column */) {
+      callAction(this, 'onColumnDrag', ...arguments);
+    },
+
+    /**
+     * onColumnDrop action.
+     *
+     * @event onColumnDrop
+     * @param  {Column}   column The column that was dropped
+     * @param  {Boolean}   isSuccess The column was successfully dropped and sorted
+     */
+    onColumnDrop(/* column, isSuccess */) {
+      callAction(this, 'onColumnDrop', ...arguments);
     }
   }
 });

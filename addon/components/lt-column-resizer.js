@@ -2,7 +2,8 @@ import Ember from 'ember';
 import layout from '../templates/components/lt-column-resizer';
 
 const {
-  $
+  $,
+  computed
 } = Ember;
 
 export default Ember.Component.extend({
@@ -14,6 +15,10 @@ export default Ember.Component.extend({
   isResizing: false,
   startWidth: null,
   startX: null,
+
+  $column: computed(function() {
+    return $(this.get('element')).parent('th');
+  }).volatile().readOnly(),
 
   didInsertElement() {
     this._super(...arguments);
@@ -41,7 +46,7 @@ export default Ember.Component.extend({
   },
 
   mouseDown(e) {
-    const $column = this._getColumn();
+    const $column = this.get('$column');
 
     e.preventDefault();
     e.stopPropagation();
@@ -58,11 +63,13 @@ export default Ember.Component.extend({
       e.preventDefault();
       e.stopPropagation();
 
-      const $column = this._getColumn();
+      const $column = this.get('$column');
+      const column = this.get('column');
+      let width = `${$column.width()}px`;
 
       this.set('isResizing', false);
-      this.set('column.width', `${$column.width()}px`);
-      this.sendAction('onColumnResized', this.get('column.width'));
+      column.set('width', width);
+      this.sendAction('onColumnResized', column, width, ...arguments);
     }
   },
 
@@ -72,7 +79,7 @@ export default Ember.Component.extend({
       e.stopPropagation();
 
       const resizeOnDrag = this.get('resizeOnDrag');
-      const $column = this._getColumn();
+      const $column = this.get('$column');
       const { startX, startWidth } = this.getProperties(['startX', 'startWidth']);
       const width = startWidth + (e.pageX - startX);
 
@@ -82,9 +89,5 @@ export default Ember.Component.extend({
         $column.width(`${width}px`);
       }
     }
-  },
-
-  _getColumn() {
-    return $(this.get('element')).parent('th');
   }
 });

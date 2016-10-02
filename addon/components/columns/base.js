@@ -39,7 +39,7 @@ const Column = Component.extend(DraggableColumnMixin, {
 
   align: computed('column.align', function () {
     return `align-${this.get('column.align')}`;
-  }).readOnly(),
+  }),
 
   /**
    * @property table
@@ -81,13 +81,7 @@ const Column = Component.extend(DraggableColumnMixin, {
   rowspan: computed('column.visibleSubColumns.[]', function () {
     let subColumns = this.get('column.visibleSubColumns');
     return !isEmpty(subColumns) ? 1 : 2;
-  }),
-
-  actions: {
-    onColumnResized(width) {
-      this.sendAction('onColumnResized', this.get('column'), width);
-    }
-  }
+  })
 });
 
 Column.reopenClass({
